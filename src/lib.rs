@@ -41,8 +41,8 @@ pub enum Matcher<'a> {
 }
 
 pub struct GrepResult {
-    file_path: String,
-    hit_lines: Vec<String>,
+    pub file_path: String,
+    pub hit_lines: Vec<String>,
 }
 
 
