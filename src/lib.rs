@@ -41,6 +41,22 @@ pub enum Matcher {
     ExtendedRegexp(ExtendedRegexpMatcher),
     FixedStrings(FixedStringsMatcher),
 }
+impl Matcher{
+    pub fn execute(&self, line: &str) -> bool{
+        match self{
+            Matcher::FixedStrings(m) => m.execute(line),
+            Matcher::ExtendedRegexp(m) => m.execute(line),
+        }
+    }
+}
+
+pub fn generate_matcher(pattern: String, is_fixed_strings_mode: bool) -> Matcher{
+    if is_fixed_strings_mode {
+        Matcher::FixedStrings(FixedStringsMatcher::new(pattern.to_string()))
+    } else {
+        Matcher::ExtendedRegexp(ExtendedRegexpMatcher::new(pattern.to_string()))
+    }
+}
 
 pub struct GrepResult {
     pub file_path: String,
