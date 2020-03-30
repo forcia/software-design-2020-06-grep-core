@@ -9,7 +9,7 @@ pub struct ExtendedRegexpMatcher {
     pattern: Regex,
 }
 impl ExtendedRegexpMatcher {
-    fn new(pattern: &str) -> ExtendedRegexpMatcher {
+    pub fn new(pattern: &str) -> ExtendedRegexpMatcher {
         ExtendedRegexpMatcher {
             pattern: Regex::new(pattern).unwrap(),
         }
@@ -25,7 +25,7 @@ pub struct FixedStringsMatcher<'a> {
     pattern: &'a str,
 }
 impl<'a> FixedStringsMatcher<'a> {
-    fn new(pattern: &str) -> FixedStringsMatcher {
+    pub fn new(pattern: &str) -> FixedStringsMatcher {
         FixedStringsMatcher { pattern: pattern }
     }
 }
