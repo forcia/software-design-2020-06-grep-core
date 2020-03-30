@@ -41,16 +41,16 @@ pub enum Matcher {
     ExtendedRegexp(ExtendedRegexpMatcher),
     FixedStrings(FixedStringsMatcher),
 }
-impl Matcher{
-    pub fn execute(&self, line: &str) -> bool{
-        match self{
+impl Matcher {
+    pub fn execute(&self, line: &str) -> bool {
+        match self {
             Matcher::FixedStrings(m) => m.execute(line),
             Matcher::ExtendedRegexp(m) => m.execute(line),
         }
     }
 }
 
-pub fn generate_matcher(pattern: String, is_fixed_strings_mode: bool) -> Matcher{
+pub fn generate_matcher(pattern: String, is_fixed_strings_mode: bool) -> Matcher {
     if is_fixed_strings_mode {
         Matcher::FixedStrings(FixedStringsMatcher::new(pattern.to_string()))
     } else {
@@ -64,9 +64,39 @@ pub struct GrepResult {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn test_extended_regexp_matcher() {
+        let matcher = ExtendedRegexpMatcher::new("c".to_string());
+        assert_eq!(true, matcher.execute("abcdefg"));
+        let matcher = ExtendedRegexpMatcher::new("fg".to_string());
+        assert_eq!(true, matcher.execute("abcdefg"));
+        let matcher = ExtendedRegexpMatcher::new("Z".to_string());
+        assert_eq!(false, matcher.execute("abcdefg"));
+        let matcher = ExtendedRegexpMatcher::new("a.c".to_string());
+        assert_eq!(true, matcher.execute("abcdefg"));
+        let matcher = ExtendedRegexpMatcher::new("a+.b+".to_string());
+        assert_eq!(true, matcher.execute("aaa bbb"));
+        let matcher = ExtendedRegexpMatcher::new("[aA][bB][cC]".to_string());
+        assert_eq!(true, matcher.execute("aBc"));
+        assert_eq!(true, matcher.execute("Abc"));
+    }
+    #[test]
+    fn test_match_fix_string() {
+        let matcher = FixedStringsMatcher::new("c".to_string());
+        assert_eq!(true, matcher.execute("abcdefg"));
+        assert_eq!(true, matcher.execute("cccc"));
+        let matcher = FixedStringsMatcher::new("fg".to_string());
+        assert_eq!(true, matcher.execute("abcdefg"));
+        let matcher = FixedStringsMatcher::new("Z".to_string());
+        assert_eq!(false, matcher.execute("abcdefg"));
+        let matcher = FixedStringsMatcher::new("a.c".to_string());
+        assert_eq!(false, matcher.execute("abcdefg"));
+        let matcher = FixedStringsMatcher::new("a+.b+".to_string());
+        assert_eq!(false, matcher.execute("aaa bbb"));
+        let matcher = FixedStringsMatcher::new("[aA][bB][cC]".to_string());
+        assert_eq!(false, matcher.execute("aBc"));
     }
 }
