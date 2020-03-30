@@ -5,17 +5,19 @@ pub trait MatcherTrait {
     fn execute(&self, line: &str) -> bool;
 }
 
-pub struct ExtendedRegexpMatcher {
+pub struct ExtendedRegexpMatcher<'a> {
+    _original: &'a str,
     pattern: Regex,
 }
-impl ExtendedRegexpMatcher {
-    pub fn new(pattern: &str) -> ExtendedRegexpMatcher {
+impl<'a> ExtendedRegexpMatcher<'a> {
+    pub fn new(pattern: &'a str) -> ExtendedRegexpMatcher {
         ExtendedRegexpMatcher {
+            _original: pattern,
             pattern: Regex::new(pattern).unwrap(),
         }
     }
 }
-impl MatcherTrait for ExtendedRegexpMatcher {
+impl<'a> MatcherTrait for ExtendedRegexpMatcher<'a> {
     fn execute(&self, line: &str) -> bool {
         self.pattern.is_match(line)
     }
@@ -25,7 +27,7 @@ pub struct FixedStringsMatcher<'a> {
     pattern: &'a str,
 }
 impl<'a> FixedStringsMatcher<'a> {
-    pub fn new(pattern: &str) -> FixedStringsMatcher {
+    pub fn new(pattern: &'a str) -> FixedStringsMatcher {
         FixedStringsMatcher { pattern: pattern }
     }
 }
@@ -36,7 +38,7 @@ impl<'a> MatcherTrait for FixedStringsMatcher<'a> {
 }
 
 pub enum Matcher<'a> {
-    ExtendedRegexp(ExtendedRegexpMatcher),
+    ExtendedRegexp(ExtendedRegexpMatcher<'a>),
     FixedStrings(FixedStringsMatcher<'a>),
 }
 
