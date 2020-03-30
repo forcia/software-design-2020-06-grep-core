@@ -1,52 +1,48 @@
 use regex::Regex;
 
-
 pub trait MatcherTrait {
     fn execute(&self, line: &str) -> bool;
 }
 
-pub struct ExtendedRegexpMatcher<'a> {
-    _original: &'a str,
+pub struct ExtendedRegexpMatcher {
     pattern: Regex,
 }
-impl<'a> ExtendedRegexpMatcher<'a> {
-    pub fn new(pattern: &'a str) -> ExtendedRegexpMatcher {
+impl ExtendedRegexpMatcher {
+    pub fn new(pattern: String) -> ExtendedRegexpMatcher {
         ExtendedRegexpMatcher {
-            _original: pattern,
-            pattern: Regex::new(pattern).unwrap(),
+            pattern: Regex::new(&pattern).unwrap(),
         }
     }
 }
-impl<'a> MatcherTrait for ExtendedRegexpMatcher<'a> {
+impl MatcherTrait for ExtendedRegexpMatcher {
     fn execute(&self, line: &str) -> bool {
         self.pattern.is_match(line)
     }
 }
 
-pub struct FixedStringsMatcher<'a> {
-    pattern: &'a str,
+pub struct FixedStringsMatcher {
+    pattern: String,
 }
-impl<'a> FixedStringsMatcher<'a> {
-    pub fn new(pattern: &'a str) -> FixedStringsMatcher {
+impl FixedStringsMatcher {
+    pub fn new(pattern: String) -> FixedStringsMatcher {
         FixedStringsMatcher { pattern: pattern }
     }
 }
-impl<'a> MatcherTrait for FixedStringsMatcher<'a> {
+impl MatcherTrait for FixedStringsMatcher {
     fn execute(&self, line: &str) -> bool {
-        line.contains(self.pattern)
+        line.contains(&self.pattern)
     }
 }
 
-pub enum Matcher<'a> {
-    ExtendedRegexp(ExtendedRegexpMatcher<'a>),
-    FixedStrings(FixedStringsMatcher<'a>),
+pub enum Matcher {
+    ExtendedRegexp(ExtendedRegexpMatcher),
+    FixedStrings(FixedStringsMatcher),
 }
 
 pub struct GrepResult {
     pub file_path: String,
     pub hit_lines: Vec<String>,
 }
-
 
 #[cfg(test)]
 mod tests {
