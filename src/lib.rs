@@ -58,10 +58,6 @@ pub fn generate_matcher(pattern: String, is_fixed_strings_mode: bool) -> Matcher
     }
 }
 
-pub struct GrepResult {
-    pub file_path: String,
-    pub hit_lines: Vec<String>,
-}
 
 #[cfg(test)]
 mod test {
