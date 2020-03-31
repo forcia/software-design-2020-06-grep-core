@@ -49,9 +49,7 @@ impl Matcher {
             Matcher::ExtendedRegexp(ExtendedRegexpMatcher::new(pattern.to_string()))
         }
     }
-}
-impl MatcherTrait for Matcher {
-    fn execute(&self, line: &str) -> bool {
+    pub fn execute(&self, line: &str) -> bool {
         match self {
             Matcher::FixedStrings(m) => m.execute(line),
             Matcher::ExtendedRegexp(m) => m.execute(line),
