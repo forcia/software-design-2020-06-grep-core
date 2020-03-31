@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub trait MatcherTrait {
+trait MatcherTrait {
     fn execute(&self, line: &str) -> bool;
 }
 
@@ -42,22 +42,22 @@ pub enum Matcher {
     FixedStrings(FixedStringsMatcher),
 }
 impl Matcher {
-    pub fn execute(&self, line: &str) -> bool {
+    pub fn new(pattern: String, is_fixed_strings_mode: bool) -> Matcher {
+        if is_fixed_strings_mode {
+            Matcher::FixedStrings(FixedStringsMatcher::new(pattern.to_string()))
+        } else {
+            Matcher::ExtendedRegexp(ExtendedRegexpMatcher::new(pattern.to_string()))
+        }
+    }
+}
+impl MatcherTrait for Matcher {
+    fn execute(&self, line: &str) -> bool {
         match self {
             Matcher::FixedStrings(m) => m.execute(line),
             Matcher::ExtendedRegexp(m) => m.execute(line),
         }
     }
 }
-
-pub fn generate_matcher(pattern: String, is_fixed_strings_mode: bool) -> Matcher {
-    if is_fixed_strings_mode {
-        Matcher::FixedStrings(FixedStringsMatcher::new(pattern.to_string()))
-    } else {
-        Matcher::ExtendedRegexp(ExtendedRegexpMatcher::new(pattern.to_string()))
-    }
-}
-
 
 #[cfg(test)]
 mod test {
